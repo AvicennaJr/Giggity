@@ -44,6 +44,7 @@ func (m MovieModel) Insert(movie *Movie) error {
 
 	return m.DB.QueryRow(query, args...).Scan(&movie.ID, &movie.CreatedAt, &movie.Version)
 }
+
 func (m MovieModel) Get(id int64) (*Movie, error) {
 	if id < 1 {
 		return nil, ErrRecordNotFound
@@ -73,6 +74,7 @@ func (m MovieModel) Get(id int64) (*Movie, error) {
 	}
 	return &movie, nil
 }
+
 func (m MovieModel) Update(movie *Movie) error {
 	query := "update movies set title=$1, year=$2, runtime=$3, genres=$4, version= version + 1 where id=$5 returning version"
 
@@ -82,5 +84,25 @@ func (m MovieModel) Update(movie *Movie) error {
 }
 
 func (m MovieModel) Delete(id int64) error {
+	if id < 1 {
+		return ErrRecordNotFound
+	}
+
+	query := "delete from movies where id = $1"
+
+	result, err := m.DB.Exec(query, id)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return ErrRecordNotFound
+	}
+
 	return nil
 }
