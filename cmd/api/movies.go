@@ -3,6 +3,9 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"time"
+
+	"github.com/AvicennaJr/Giggity/internal/data"
 )
 
 func (app *application) createMovieHandler(w http.ResponseWriter, r *http.Request) {
@@ -16,5 +19,18 @@ func (app *application) showMovieHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	fmt.Fprintf(w, "show move %d\n", id)
+	movie := data.Movie{
+		ID:        id,
+		CreatedAt: time.Now(),
+		Title:     "Nsyuka",
+		Runtime:   102,
+		Genres:    []string{"horror", "comedy"},
+		Version:   1,
+	}
+
+	err = app.writeJSON(w, http.StatusOK, movie, nil)
+	if err != nil {
+		app.logger.Println(err)
+		http.Error(w, "There was a problem", http.StatusInternalServerError)
+	}
 }
