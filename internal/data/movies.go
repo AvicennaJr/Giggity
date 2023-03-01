@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/AvicennaJr/Giggity/internal/validator"
+	"github.com/lib/pq"
 )
 
 type Movie struct {
@@ -36,7 +37,11 @@ type MovieModel struct {
 }
 
 func (m MovieModel) Insert(movie *Movie) error {
-	return nil
+	query := "Insert into movies (title, year, runtime, genres) values ($1, $2, $3, $4) returning id, created_at, version"
+
+	args := []interface{}{movie.Title, movie.Year, movie.Runtime, pq.Array(movie.Genres)}
+
+	return m.DB.QueryRow(query, args...).Scan(&movie.ID, &movie.CreatedAt, &movie.Version)
 }
 func (m MovieModel) Get(id int64) (*Movie, error) {
 	return nil, nil
