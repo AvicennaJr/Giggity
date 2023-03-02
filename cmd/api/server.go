@@ -34,7 +34,7 @@ func (app *application) serve() error {
 		app.logger.PrintInfo("caught signal", map[string]string{
 			"signal": s.String(),
 		})
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 		defer cancel()
 
 		err := srv.Shutdown(ctx)
