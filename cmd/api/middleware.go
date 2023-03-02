@@ -71,7 +71,7 @@ func (app *application) rateLimit(next http.Handler) http.Handler {
 				return
 			}
 			mu.Unlock()
-			next.ServeHTTP(w, r)
 		}
+		next.ServeHTTP(w, r)
 	})
 }
